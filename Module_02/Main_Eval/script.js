@@ -39,3 +39,23 @@ document.addEventListener('DOMContentLoaded',()=>{
         loginform.addEventListener('submit',handleLogin)
     }
 })
+
+
+const createCardHTML = (vehicle)=>{
+    const isAvailable = vehicle.isAvailable==='Available'
+    const statusClass=isAvailable?'available':'unavailable'
+    const statusText=vehicle.isAvailable
+
+    return `<div class="vehicle-card" data-id="${vehicle.id}">
+    <img src="${PLACEHOLDER_IMG_SRC}" alt="${vehicle.category} vehicle">
+    <div class="card-info">
+    <h4>Reg No:${vehicle.regNo}</h4>
+    <p><strong>Category:</strong>${vehicle.category}</p>
+    <p><strong>Driver:</strong>${vehicle.driverName}</p>
+    <p><strong>Status:</strong>
+    <span class="availability-status ${statusClass}">${statusText}</span></p></div>
+    <div class="card-actions"><button class="update-btn" data-action="update-driver" data-id="${vehicle.id}">Update Driver</button>
+    <button class="toggle-button" data-action="change-availability" data-id="${vehicle.id}"> Change Availability</button>
+    <button class="delete-btn" data-action="delete-vehicle" data-id="${vehicle.id}>Delete Vehicle</button></div></div>`
+}
+
