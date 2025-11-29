@@ -4,47 +4,47 @@ const VALID_PASSWORD = 'admin1234'
 const STORAGE_KEY = 'fleetmanagementData'
 const PLACEHOLDER_IMG_SRC = 'https://via.placeholder.com/400x150.png?text=Vehicle+Image'
 
-const getFleet =()=>{
-    const data=localStorage.getItem(STORAGE_KEY)
-    try{
-        return data?JSON.parse(data):[]
-    }catch(e){
-        console.error("Error parsing fleet data from localStorage",e)
-        return[]
+const getFleet = () => {
+    const data = localStorage.getItem(STORAGE_KEY)
+    try {
+        return data ? JSON.parse(data) : []
+    } catch (e) {
+        console.error("Error parsing fleet data from localStorage", e)
+        return []
     }
 }
 
-const saveFleet = (fleet)=>{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify(fleet))
+const saveFleet = (fleet) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(fleet))
 }
 
-const handleLogin = (event)=>{
-    if(!document.getElementById('loginform'))
+const handleLogin = (event) => {
+    if (!document.getElementById('loginform'))
         return
 
     event.preventDefault()
-    const emailInput=document.getElementById('email').value 
-    const passwordInput=document.getElementById('password').value 
+    const emailInput = document.getElementById('email').value
+    const passwordInput = document.getElementById('password').value
 
-    if(emailInput===VALID_EMAIL && passwordInput===VALID_PASSWORD){
+    if (emailInput === VALID_EMAIL && passwordInput === VALID_PASSWORD) {
         alert("Login Success")
-        window.location.href="admin.html"
-    }else{
+        window.location.href = "admin.html"
+    } else {
         alert("Wrong email or password")
     }
 }
-document.addEventListener('DOMContentLoaded',()=>{
-    const loginform=document.getElementById('loginform')
-    if(loginform){
-        loginform.addEventListener('submit',handleLogin)
+document.addEventListener('DOMContentLoaded', () => {
+    const loginform = document.getElementById('loginform')
+    if (loginform) {
+        loginform.addEventListener('submit', handleLogin)
     }
 })
 
 
-const createCardHTML = (vehicle)=>{
-    const isAvailable = vehicle.isAvailable==='Available'
-    const statusClass=isAvailable?'available':'unavailable'
-    const statusText=vehicle.isAvailable
+const createCardHTML = (vehicle) => {
+    const isAvailable = vehicle.isAvailable === 'Available'
+    const statusClass = isAvailable ? 'available' : 'unavailable'
+    const statusText = vehicle.isAvailable
 
     return `<div class="vehicle-card" data-id="${vehicle.id}">
     <img src="${PLACEHOLDER_IMG_SRC}" alt="${vehicle.category} vehicle">
@@ -59,41 +59,41 @@ const createCardHTML = (vehicle)=>{
     <button class="delete-btn" data-action="delete-vehicle" data-id="${vehicle.id}>Delete Vehicle</button></div></div>`
 }
 
-const renderFleetCards=(fleetToRender)=>{
-    const container=document.getElementById("fleetCardsContainer")
-    if(!container)return
-    if(fleetToRender.length===0){
-        container.innerHTML='<p>No vehicles in the fleet matching current criteria.Add one using the form on the left.</p>'
+const renderFleetCards = (fleetToRender) => {
+    const container = document.getElementById("fleetCardsContainer")
+    if (!container) return
+    if (fleetToRender.length === 0) {
+        container.innerHTML = '<p>No vehicles in the fleet matching current criteria.Add one using the form on the left.</p>'
         return
     }
-    const cardsHTML=fleetToRender.mao(createCardHTML).join('')
-    container.innerHTML=cardsHTML
+    const cardsHTML = fleetToRender.map(createCardHTML).join('')
+    container.innerHTML = cardsHTML
 }
 
-const handleAddFleet=(event)=>{
-    if(!document.getElementById('addFleetForm'))
+const handleAddFleet = (event) => {
+    if (!document.getElementById('addFleetForm'))
         return
     event.preventDefault()
 
-    const regNo=document.getElementById('regNo').value.trim()
-    const category=document.getElementById('category').value.trim()
-    const driverName=document.getElementById('driverName').value.trim()
-    const isAvailable=document.getElementById('isAvailable').value.trim()
+    const regNo = document.getElementById('regNo').value.trim()
+    const category = document.getElementById('category').value
+    const driverName = document.getElementById('driverName').value.trim()
+    const isAvailable = document.getElementById('isAvailable').value
 
-    if(!regNo || !category || !driverName || !isAvailable){
+    if (!regNo || !category || !driverName || !isAvailable) {
         alert("Please fill out all required fields")
         return
     }
 
-    const newVehicle={
-        id:Date.now(),
-        regNo:regNo,
-        category:category,
-        driverName:driverName,
-        isAvailable:isAvailable
+    const newVehicle = {
+        id: Date.now(),
+        regNo: regNo,
+        category: category,
+        driverName: driverName,
+        isAvailable: isAvailable
     }
 
-    const fleet=getFleet()
+    const fleet = getFleet()
     fleet.push(newVehicle)
     saveFleet(fleet)
 
@@ -129,10 +129,10 @@ const handleCardActions = (event) => {
 const handleUpdateDriver = (fleet, index) => {
     const newDriver = prompt("Enter a new driver name for Reg No: " + fleet[index].regNo);
 
-    if (newDriver === null) return; 
-    
+    if (newDriver === null) return;
+
     const trimmedDriver = newDriver.trim();
-    
+
     if (!trimmedDriver) {
         alert("Driver name cannot be empty. Update cancelled.");
         return;
@@ -140,8 +140,8 @@ const handleUpdateDriver = (fleet, index) => {
 
     fleet[index].driverName = trimmedDriver;
     saveFleet(fleet);
-    
-    handleFilterChange(); 
+
+    handleFilterChange();
 };
 
 const handleChangeAvailability = (fleet, index) => {
@@ -150,17 +150,17 @@ const handleChangeAvailability = (fleet, index) => {
     fleet[index].isAvailable = currentStatus === 'Available' ? 'Unavailable' : 'Available';
 
     saveFleet(fleet);
-    
-    handleFilterChange(); 
+
+    handleFilterChange();
 };
 
 const handleDeleteVehicle = (fleet, index) => {
     const isConfirmed = confirm(`Are you sure you want to delete vehicle with Reg No: ${fleet[index].regNo}?`);
 
     if (isConfirmed) {
-        fleet.splice(index, 1); 
+        fleet.splice(index, 1);
         saveFleet(fleet);
-        
+
         handleFilterChange();
     }
 };
@@ -169,7 +169,7 @@ const handleDeleteVehicle = (fleet, index) => {
 const handleFilterChange = () => {
     const categoryFilter = document.getElementById('categoryFilter');
     const availabilityFilter = document.getElementById('availabilityFilter');
-    
+
     if (!categoryFilter || !availabilityFilter) return;
 
     const selectedCategory = categoryFilter.value;
@@ -191,7 +191,7 @@ const handleFilterChange = () => {
 const handleClearFilter = () => {
     const categoryFilter = document.getElementById('categoryFilter');
     const availabilityFilter = document.getElementById('availabilityFilter');
-    
+
     if (!categoryFilter || !availabilityFilter) return;
 
     categoryFilter.value = 'ALL';
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         categoryFilter.addEventListener('change', handleFilterChange);
         availabilityFilter.addEventListener('change', handleFilterChange);
         clearFilterBtn.addEventListener('click', handleClearFilter);
-        
-        handleFilterChange(); 
+
+        handleFilterChange();
     }
 });
