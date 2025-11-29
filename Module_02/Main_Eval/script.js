@@ -59,3 +59,46 @@ const createCardHTML = (vehicle)=>{
     <button class="delete-btn" data-action="delete-vehicle" data-id="${vehicle.id}>Delete Vehicle</button></div></div>`
 }
 
+const renderFleetCards=(fleetToRender)=>{
+    const container=document.getElementById("fleetCardsContainer")
+    if(!container)return
+    if(fleetToRender.length===0){
+        container.innerHTML='<p>No vehicles in the fleet matching current criteria.Add one using the form on the left.</p>'
+        return
+    }
+    const cardsHTML=fleetToRender.mao(createCardHTML).join('')
+    container.innerHTML=cardsHTML
+}
+
+const handleAddFleet=(event)=>{
+    if(!document.getElementById('addFleetForm'))
+        return
+    event.preventDefault()
+
+    const regNo=document.getElementById('regNo').value.trim()
+    const category=document.getElementById('category').value.trim()
+    const driverName=document.getElementById('driverName').value.trim()
+    const isAvailable=document.getElementById('isAvailable').value.trim()
+
+    if(!regNo || !category || !driverName || !isAvailable){
+        alert("Please fill out all required fields")
+        return
+    }
+
+    const newVehicle={
+        id:Date.now(),
+        regNo:regNo,
+        category:category,
+        driverName:driverName,
+        isAvailable:isAvailable
+    }
+
+    const fleet=getFleet()
+    fleet.push(newVehicle)
+    saveFleet(fleet)
+
+    document.getElementById('addFleetForm').reset()
+    alert(`Vehicle ${regNo} added successfully!`)
+
+    handleFilterChange()
+}
